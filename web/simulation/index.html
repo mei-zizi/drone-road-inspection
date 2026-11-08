@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无人机道路检修智能体</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #30363d;
+    --text: #e6edf3; --text-dim: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --orange: #db6d28; --purple: #bc8cff;
+  }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text);
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  header {
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+  }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header .subtitle { color: var(--text-dim); font-size: 12px; }
+  header .status-badge {
+    margin-left: auto; padding: 4px 12px; border-radius: 12px;
+    font-size: 12px; font-weight: 600; background: #21262d; border: 1px solid var(--border);
+  }
+  .main { display: flex; flex: 1; overflow: hidden; }
+  /* 左侧画布区 */
+  .canvas-area { flex: 1; position: relative; background: #0a0e14; overflow: hidden; }
+  #mainCanvas { display: block; width: 100%; height: 100%; }
+  .canvas-overlay {
+    position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .legend {
+    background: rgba(22,27,34,0.9); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px; font-size: 11px; line-height: 1.8;
+  }
+  .legend .dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
+  }
+  /* 右侧面板 */
+  .sidebar {
+    width: 380px; background: var(--panel); border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  }
+  .section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .section h3 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .section h3::before {
+    content: ""; width: 3px; height: 12px; background: var(--accent); border-radius: 2px;
+  }
+  /* 控制按钮 */
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px;
+    background: #21262d; color: var(--text); font-size: 13px; cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .btn:hover { background: #30363d; border-color: #8b949e; }
+  .btn.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+  .btn.primary:hover { background: #388bfd; }
+  .btn.warn { background: #9e6a03; border-color: #9e6a03; color: #fff; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .speed-control { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12px; }
+  .speed-control input[type=range] { flex: 1; accent-color: var(--accent); }
+  /* 状态网格 */
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card {
+    background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .stat-card .label { font-size: 11px; color: var(--text-dim); }
+  .stat-card .value { font-size: 16px; font-weight: 600; margin-top: 2px; }
+  .stat-card .value.green { color: var(--green); }
+  .stat-card .value.yellow { color: var(--yellow); }
+  .stat-card .value.red { color: var(--red); }
+  .stat-card .value.blue { color: var(--accent); }
+  /* 无人机状态条 */
+  .drone-status {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  }
+  .drone-icon {
+    width: 36px; height: 36px; border-radius: 8px; background: #1f6feb22;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .drone-info { flex: 1; }
+  .drone-info .state-text { font-size: 13px; font-weight: 600; }
+  .drone-info .coord-text { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .battery-bar {
+    height: 6px; background: #21262d; border-radius: 3px; margin-top: 4px; overflow: hidden;
+  }
+  .battery-bar .fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  /* 病害列表 */
+  .damage-list { max-height: 260px; overflow-y: auto; }
+  .damage-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px;
+    border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px;
+    background: #0d1117; font-size: 12px; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; } }
+  .damage-item .sev-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .damage-item .d-type { font-weight: 600; }
+  .damage-item .d-coord { color: var(--text-dim); font-size: 11px; }
+  .damage-item .priority-tag {
+    margin-left: auto; background: #f8514922; color: var(--red);
+    padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;
+    border: 1px solid #f8514944; white-space: nowrap;
+  }
+  .damage-item.severe { border-color: #f8514966; background: #f8514911; }
+  .empty-hint { color: var(--text-dim); font-size: 12px; text-align: center; padding: 20px; }
+  /* 日志 */
+  .log-list { max-height: 180px; overflow-y: auto; font-size: 11px; line-height: 1.7; }
+  .log-list .log-line { color: var(--text-dim); }
+  .log-list .log-line .time { color: #6e7681; margin-right: 6px; }
+  .log-list .log-line.warn { color: var(--yellow); }
+  .log-list .log-line.alert { color: var(--red); }
+  .log-list .log-line.ok { color: var(--green); }
+  .log-list .log-line.info { color: var(--accent); }
+  /* 报告弹窗 */
+  .modal-mask {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    width: 720px; max-width: 92vw; max-height: 86vh; display: flex; flex-direction: column;
+  }
+  .modal-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h2 { font-size: 16px; }
+  .modal-close {
+    background: none; border: none; color: var(--text-dim); font-size: 20px;
+    cursor: pointer; padding: 4px 8px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 20px; overflow-y: auto; }
+  .report-section { margin-bottom: 20px; }
+  .report-section h4 {
+    font-size: 13px; color: var(--accent); margin-bottom: 8px;
+    border-bottom: 1px solid var(--border); padding-bottom: 4px;
+  }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .report-table th, .report-table td {
+    padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .report-table th { color: var(--text-dim); font-weight: 600; }
+  .report-table .severe-row { background: #f8514911; }
+  .sev-badge {
+    padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
+  }
+  .sev-badge.minor { background: #3fb95022; color: var(--green); }
+  .sev-badge.moderate { background: #d2992222; color: var(--yellow); }
+  .sev-badge.severe { background: #f8514922; color: var(--red); }
+  .summary-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+  .summary-card {
+    background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 10px;
+    text-align: center;
+  }
+  .summary-card .num { font-size: 24px; font-weight: 700; }
+  .summary-card .lbl { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .recommendation {
+    background: #0d1117; border-left: 3px solid var(--yellow); padding: 10px 12px;
+    border-radius: 0 6px 6px 0; font-size: 12px; line-height: 1.7; margin-bottom: 6px;
+  }
+  .recommendation.critical { border-left-color: var(--red); }
+  /* 滚动条 */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🚁 无人机道路检修智能体</h1>
+  <span class="subtitle">Drone Road Inspection Agent · 自动巡检 / 病害识别 / 避障 / 报告生成</span>
+  <span class="status-badge" id="agentStatus">待命</span>
+</header>
+<div class="main">
+  <div class="canvas-area">
+    <canvas id="mainCanvas"></canvas>
+    <div class="canvas-overlay">
+      <div class="legend">
+        <div><span class="dot" style="background:#58a6ff"></span>规划航线</div>
+        <div><span class="dot" style="background:#3fb950"></span>已巡检区域</div>
+        <div><span class="dot" style="background:#d29922"></span>障碍物</div>
+        <div><span class="dot" style="background:#f85149"></span>严重病害(重点)</div>
+        <div><span class="dot" style="background:#bc8cff"></span>一般病害</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="section">
+      <h3>任务控制</h3>
+      <div class="controls">
+        <button class="btn primary" id="btnStart">▶ 开始巡检</button>
+        <button class="btn" id="btnPause" disabled>⏸ 暂停</button>
+        <button class="btn" id="btnReset">↺ 重置</button>
+        <button class="btn" id="btnReport" disabled>📋 查看报告</button>
+      </div>
+      <div class="speed-control">
+        <span>仿真速度</span>
+        <input type="range" id="speedSlider" min="1" max="10" value="4">
+        <span id="speedLabel">4x</span>
+      </div>
+    </div>
+    <div class="section">
+      <h3>无人机状态</h3>
+      <div class="drone-status">
+        <div class="drone-icon">🚁</div>
+        <div class="drone-info">
+          <div class="state-text" id="droneState">待命</div>
+          <div class="coord-text" id="droneCoord">位置: -- / 高度: --</div>
+          <div class="battery-bar"><div class="fill" id="batteryFill" style="width:100%;background:var(--green)"></div></div>
+        </div>
+      </div>
+      <div class="status-grid" style="margin-top:8px">
+        <div class="stat-card"><div class="label">飞行距离</div><div class="value blue" id="statDistance">0 m</div></div>
+        <div class="stat-card"><div class="label">飞行时间</div><div class="value blue" id="statTime">0 s</div></div>
+        <div class="stat-card"><div class="label">采集影像</div><div class="value" id="statImages">0 张</div></div>
+        <div class="stat-card"><div class="label">发现病害</div><div class="value yellow" id="statDamages">0 处</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <h3>病害检测记录</h3>
+      <div class="damage-list" id="damageList">
+        <div class="empty-hint">尚未发现病害</div>
+      </div>
+    </div>
+    <div class="section" style="flex:1">
+      <h3>巡检日志</h3>
+      <div class="log-list" id="logList"></div>
+    </div>
+  </div>
+</div>
+<!-- 报告弹窗 -->
+<div class="modal-mask" id="reportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📋 道路巡检报告</h2>
+      <button class="modal-close" id="btnCloseReport">✕</button>
+    </div>
+    <div class="modal-body" id="reportBody"></div>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/environment.js"></script>
+<script src="js/planning.js"></script>
+<script src="js/drone.js"></script>
+<script src="js/report.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/agent.js"></script>
+</body>
+</html>
