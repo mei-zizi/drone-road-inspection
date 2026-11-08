@@ -1,0 +1,65 @@
+{
+  "map_id": "ROADMAP-YUNLING-001",
+  "road_name": "云岭大道（K0+000 ~ K1+200 段）",
+  "coordinate_system": "WGS84",
+  "road_centerline": [
+    {"lon": 116.397428, "lat": 39.909230},
+    {"lon": 116.398500, "lat": 39.910200},
+    {"lon": 116.399800, "lat": 39.911300},
+    {"lon": 116.401000, "lat": 39.912400},
+    {"lon": 116.402300, "lat": 39.913500},
+    {"lon": 116.403500, "lat": 39.914600},
+    {"lon": 116.404800, "lat": 39.915700},
+    {"lon": 116.406000, "lat": 39.916800},
+    {"lon": 116.407200, "lat": 39.917700},
+    {"lon": 116.408570, "lat": 39.918750}
+  ],
+  "road_width_m": 12.0,
+  "known_obstacles": [
+    {
+      "obstacle_id": "OBS-001",
+      "type": "tree",
+      "lon": 116.399200,
+      "lat": 39.911050,
+      "height_m": 15.0,
+      "radius_m": 6.0,
+      "note": "行道树，伸入航拍走廊"
+    },
+    {
+      "obstacle_id": "OBS-002",
+      "type": "wire",
+      "lon": 116.402100,
+      "lat": 39.913300,
+      "height_m": 18.0,
+      "radius_m": 4.0,
+      "note": "横跨架空线缆"
+    },
+    {
+      "obstacle_id": "OBS-003",
+      "type": "building",
+      "lon": 116.405200,
+      "lat": 39.915500,
+      "height_m": 25.0,
+      "radius_m": 8.0,
+      "note": "路边在建建筑塔吊"
+    },
+    {
+      "obstacle_id": "OBS-004",
+      "type": "vehicle",
+      "lon": 116.406800,
+      "lat": 39.917100,
+      "height_m": 4.0,
+      "radius_m": 5.0,
+      "note": "停放的大型货车"
+    }
+  ],
+  "preliminary_survey": {
+    "note": "前期人工踏勘记录的可疑病害区域，供智能体航拍复核",
+    "suspect_zones": [
+      {"zone_id": "SZ-001", "lon": 116.398900, "lat": 39.910600, "note": "疑似坑洼，积水"},
+      {"zone_id": "SZ-002", "lon": 116.401500, "lat": 39.912800, "note": "疑似纵向裂缝"},
+      {"zone_id": "SZ-003", "lon": 116.404500, "lat": 39.915200, "note": "疑似大面积龟裂"},
+      {"zone_id": "SZ-004", "lon": 116.407500, "lat": 39.917900, "note": "疑似沉陷变形"}
+    ]
+  }
+}
