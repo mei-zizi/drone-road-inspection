@@ -1,0 +1,23 @@
+{
+  "mission_id": "MISSION-20261106-001",
+  "road_name": "云岭大道（K0+000 ~ K1+200 段）",
+  "road_grade": "城市主干道",
+  "description": "对云岭大道起点至1.2公里段进行无人机航拍巡检，排查路面坑洼、裂缝等病害，为道路维护检修提供依据。",
+  "start_point": {
+    "lon": 116.397428,
+    "lat": 39.909230,
+    "alt": 30.0
+  },
+  "end_point": {
+    "lon": 116.408570,
+    "lat": 39.918750,
+    "alt": 30.0
+  },
+  "road_width_m": 12.0,
+  "flight_altitude": 30.0,
+  "capture_interval_m": 20.0,
+  "overlap_rate": 0.6,
+  "operator": "无人机道路巡检智能体",
+  "weather": "晴，能见度良好，风力2级",
+  "created_at": "2026-11-06T08:00:00"
+}
