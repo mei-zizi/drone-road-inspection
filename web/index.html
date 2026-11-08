@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无人机道路智能巡检系统</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ======== 顶部导航 ======== -->
+<header class="top-header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">&#9992;</span>
+      <span class="logo-text">无人机道路智能巡检系统</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#intro">项目介绍</a>
+      <a href="#principle">技术原理</a>
+      <a href="#upload">数据上传</a>
+      <a href="#charts">数据可视化</a>
+      <a href="#map">地图标注</a>
+      <a href="#report">巡检报告</a>
+      <a href="simulation/" class="nav-sim-link">&#9654; 仿真演示</a>
+    </nav>
+    <div class="agent-status" id="agentStatus" title="巡检智能体连接状态">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">检测中...</span>
+    </div>
+  </div>
+</header>
+
+<!-- ======== 一、项目介绍 ======== -->
+<section id="intro" class="section">
+  <div class="hero">
+    <h1>无人机道路智能巡检系统</h1>
+    <p class="hero-sub">AI 赋能道路养护 &middot; 全自动巡检 &middot; 智能病害识别 &middot; 一键生成报告</p>
+    <div class="hero-badges">
+      <span class="badge">路径自动规划</span>
+      <span class="badge">AI病害识别</span>
+      <span class="badge">实时避障</span>
+      <span class="badge">桩号定位</span>
+    </div>
+  </div>
+  <!-- 实时仿真入口 -->
+  <div class="sim-entry">
+    <div class="sim-entry-inner">
+      <div class="sim-entry-text">
+        <h3>&#128640; 巡检全流程实时仿真</h3>
+        <p>启动无人机仿真控制台，实时观看路径规划 &rarr; 起飞巡航 &rarr; 影像采集 &rarr; 病害识别 &rarr; 智能避障 &rarr; 报告生成的完整巡检流程演示。</p>
+      </div>
+      <a href="simulation/" class="sim-entry-btn">&#9654; 启动仿真控制台</a>
+    </div>
+  </div>
+  <h2 class="section-title">功能说明</h2>
+  <div class="features-grid" id="featuresGrid"></div>
+</section>
+
+<!-- ======== 二、项目原理与创新优势 ======== -->
+<section id="principle" class="section section-alt">
+  <h2 class="section-title">项目原理</h2>
+  <p class="section-desc">无人机道路巡检智能体采用"感知 &mdash; 规划 &mdash; 执行 &mdash; 分析"闭环架构，实现道路巡检全流程自动化运行。</p>
+  <!-- 技术流程步骤（JS动态渲染） -->
+  <div class="flow-steps" id="flowSteps"></div>
+  <!-- 核心技术卡片 -->
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#2563eb">&#128205;</div>
+      <h4>割草机式覆盖路径规划</h4>
+      <p>根据道路中心线与路面宽度，自动生成弓字形（Boustrophedon）覆盖航线，保证影像重叠率 &ge; 80%，巡检无漏拍区域。</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#8b5cf6">&#128269;</div>
+      <h4>连通域病害识别算法</h4>
+      <p>对航拍影像进行灰度化、二值化与形态学滤波，通过连通域分析提取坑洼、裂缝、车辙、沉陷、边缘破损五类病害特征。</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#f59e0b">&#9888;</div>
+      <h4>前瞻探测智能避障</h4>
+      <p>飞行中实时探测前方航段障碍物冲突，自动计算法线偏移绕行航点，递归校验直至航线安全，最多支持两层绕行。</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon" style="background:#06b6d4">&#128204;</div>
+      <h4>像素坐标反算地理坐标</h4>
+      <p>结合飞行高度、相机参数与GPS基准点，将病害像素坐标反算为WGS84经纬度与道路桩号，实现厘米级精准定位。</p>
+    </div>
+  </div>
+
+  <!-- 创新优势 -->
+  <h2 class="section-title" style="margin-top:48px">创新优势</h2>
+  <p class="section-desc">对比传统人工巡检方式，无人机智能巡检在效率、安全、精度、成本等维度全面领先。</p>
+  <div class="compare-wrapper">
+    <table class="compare-table">
+      <thead>
+        <tr><th style="width:18%">对比维度</th><th style="width:41%">传统人工巡检</th><th style="width:41%">无人机智能巡检</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-dim">&#9201; 巡检效率</td><td class="td-bad">约 5 km/天，耗时耗力</td><td class="td-good">&#10004; 约 50 km/天，效率提升 10 倍</td></tr>
+        <tr><td class="td-dim">&#128107; 安全风险</td><td class="td-bad">人员上路作业，交通风险高</td><td class="td-good">&#10004; 空中作业，人员零暴露</td></tr>
+        <tr><td class="td-dim">&#128202; 检测精度</td><td class="td-bad">目视排查，漏检率 &gt; 20%</td><td class="td-good">&#10004; AI 识别，检出率 &gt; 95%</td></tr>
+        <tr><td class="td-dim">&#128190; 数据留存</td><td class="td-bad">纸质记录，难以追溯对比</td><td class="td-good">&#10004; 全流程数字化，可追溯</td></tr>
+        <tr><td class="td-dim">&#9889; 响应速度</td><td class="td-bad">定期排查，周期长滞后</td><td class="td-good">&#10004; 快速响应，即叫即飞</td></tr>
+        <tr><td class="td-dim">&#128176; 综合成本</td><td class="td-bad">长期人工投入成本高</td><td class="td-good">&#10004; 一次投入，边际成本趋零</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ======== 三、数据上传 ======== -->
+<section id="upload" class="section section-alt">
+  <h2 class="section-title">航拍数据上传</h2>
+  <p class="section-desc">支持上传 Excel 病害数据表（.xlsx / .xls / .csv）与航拍影像图片（.png / .jpg），系统自动校验文件格式与内容结构。</p>
+  <div class="upload-wrapper">
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">&#128194;</div>
+      <p class="upload-text">将文件拖拽到此处，或 <span class="upload-link">点击选择文件</span></p>
+      <p class="upload-hint">支持 .xlsx / .xls / .csv / .png / .jpg / .jpeg，单文件不超过 20MB</p>
+      <input type="file" id="fileInput" multiple accept=".xlsx,.xls,.csv,.png,.jpg,.jpeg" hidden>
+    </div>
+    <div class="upload-progress" id="uploadProgress" style="display:none">
+      <div class="progress-info"><span id="progressFileName">--</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div id="uploadStatus" class="upload-status"></div>
+    <div class="agent-log-panel" id="agentLogPanel" style="display:none">
+      <div class="agent-log-header">
+        <span>&#129302; 巡检智能体处理日志</span>
+        <button class="log-close" id="logCloseBtn">&times;</button>
+      </div>
+      <div class="agent-log-body" id="agentLogBody"></div>
+    </div>
+    <div class="data-preview" id="dataPreview" style="display:none"></div>
+    <div id="imageGallery" class="image-gallery"></div>
+  </div>
+</section>
+
+<!-- ======== 四、病害可视化 ======== -->
+<section id="charts" class="section">
+  <div class="section-header">
+  <h2 class="section-title">病害数据可视化</h2>
+  <div class="chart-actions">
+    <button class="btn btn-outline btn-sm" id="btnLoadResults">&#128230; 加载巡检数据</button>
+    <button class="btn btn-primary btn-sm" id="btnRunInspection">&#9992; 一键全流程巡检</button>
+    <button class="btn btn-success btn-sm" id="btnSimulate">&#9889; 模拟AI识别</button>
+    <button class="btn btn-outline btn-sm" id="btnRefreshCharts">&#8635; 重置数据</button>
+  </div>
+  </div>
+  <div class="stats-cards" id="statsCards"></div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title">病害类型分布</h3>
+        <div class="chart-toggle" data-target="typeBar">
+          <button class="toggle-btn active" data-mode="bar">柱状图</button>
+          <button class="toggle-btn" data-mode="pie">饼图</button>
+        </div>
+      </div>
+      <div class="chart-body"><canvas id="typeBarChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title">病害严重程度占比</h3>
+        <div class="chart-toggle" data-target="sevPie">
+          <button class="toggle-btn" data-mode="bar">柱状图</button>
+          <button class="toggle-btn active" data-mode="pie">饼图</button>
+        </div>
+      </div>
+      <div class="chart-body"><canvas id="severityPieChart"></canvas></div>
+    </div>
+    <div class="chart-card chart-full">
+      <h3 class="chart-title">病害里程分布统计</h3>
+      <div class="chart-body"><canvas id="mileageChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 五、地图可视化 ======== -->
+<section id="map" class="section section-alt">
+  <h2 class="section-title">病害点位地图标注</h2>
+  <p class="section-desc">道路中心线航拍走廊示意图，病害点位按严重程度着色标记，鼠标悬停查看详情。</p>
+  <div class="map-wrapper">
+    <canvas id="mapCanvas" width="1100" height="420"></canvas>
+    <div class="map-tooltip" id="mapTooltip"></div>
+    <div class="map-legend" id="mapLegend"></div>
+  </div>
+</section>
+
+<!-- ======== 六、报告预览与导出 ======== -->
+<section id="report" class="section">
+  <h2 class="section-title">巡检报告预览</h2>
+  <div class="report-toolbar">
+    <button class="btn btn-primary btn-lg" id="btnExportHtml">&#11015; 下载报告（HTML）</button>
+    <button class="btn btn-outline" id="btnExportMd">&#128190; Markdown</button>
+    <button class="btn btn-outline" id="btnExportJson">&#128190; JSON 数据</button>
+    <button class="btn btn-outline" id="btnPrint">&#128424; 打印 / PDF</button>
+  </div>
+  <div class="report-preview" id="reportPreview"></div>
+</section>
+
+<!-- ======== 页脚 ======== -->
+<footer class="footer">
+  <p>无人机道路智能巡检系统 &middot; 自动生成道路检修报告 &middot; 用于道路维护检修工作</p>
+</footer>
+
+<script src="lib/chart.umd.min.js" defer></script>
+<script src="lib/xlsx.full.min.js" defer></script>
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
